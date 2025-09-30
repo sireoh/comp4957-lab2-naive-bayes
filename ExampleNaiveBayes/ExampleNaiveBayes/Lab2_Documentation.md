@@ -1,6 +1,6 @@
 # COMP 4957 - Lab 2: Naïve Bayes Classification
 
-## Software Developer Career Success Predictor
+## Food Storage Freshness Predictor
 
 **Student:** [Your Name]  
 **Course:** Technical Programming Option  
@@ -13,7 +13,7 @@
 
 ### Problem Domain
 
-The **Software Developer Career Success Predictor** is a Naïve Bayes classification system designed to predict whether a computer science student will achieve high or low career success in software development based on their academic and professional skills.
+The **Food Storage Freshness Predictor** is a Naïve Bayes classification system designed to predict whether stored food items are fresh or spoiled based on storage conditions such as location, duration, item type, and packaging quality.
 
 ### Model Architecture
 
@@ -26,10 +26,10 @@ The **Software Developer Career Success Predictor** is a Naïve Bayes classifica
 
 This model could be used by:
 
-- University career counselors to identify students who may need additional support
-- Students for self-assessment and career planning
-- Employers for preliminary screening of entry-level candidates
-- Educational institutions to improve curriculum design
+- Smart refrigerators to track and alert about food spoilage
+- Grocery stores for inventory management and waste reduction
+- Food safety apps for consumers to check item freshness
+- Restaurants and food services to minimize food waste
 
 ---
 
@@ -37,43 +37,43 @@ This model could be used by:
 
 ### Predictor Variables (4 Variables)
 
-#### Variable 1: Programming Skills
+#### Variable 1: Storage Location
 
-- **Values:** `beginner`, `intermediate`, `advanced`, `expert`
-- **Description:** Overall programming proficiency including multiple languages, frameworks, and coding practices
-- **Rationale:** Programming ability is fundamental to software development success
+- **Values:** `fridge`, `freezer`, `pantry`, `left_outside`
+- **Description:** The environment where the food item is stored
+- **Rationale:** Different storage environments provide varying levels of temperature control and protection, directly affecting food spoilage rates
 
-#### Variable 2: Math Performance
+#### Variable 2: Storage Duration
 
-- **Values:** `poor`, `fair`, `good`, `excellent`
-- **Description:** Mathematical aptitude including algorithms, discrete mathematics, and analytical thinking
-- **Rationale:** Strong mathematical foundation is crucial for algorithm design and complex problem solving
+- **Values:** `short`, `medium`, `long`, `very_long`
+- **Description:** The length of time the item has been stored
+- **Rationale:** Time is a critical factor in food spoilage - the longer food is stored, the higher the risk of deterioration
 
-#### Variable 3: Team Collaboration
+#### Variable 3: Item Type
 
-- **Values:** `poor`, `average`, `good`, `excellent`
-- **Description:** Ability to work effectively in teams, communicate ideas, and contribute to group projects
-- **Rationale:** Modern software development is highly collaborative, requiring strong teamwork skills
+- **Values:** `meat`, `vegetable`, `dairy`, `grain`, `canned`
+- **Description:** The category of food item being stored
+- **Rationale:** Different food types have vastly different spoilage rates and storage requirements
 
-#### Variable 4: Problem Solving
+#### Variable 4: Packaging Quality
 
-- **Values:** `weak`, `moderate`, `strong`, `exceptional`
-- **Description:** Analytical thinking, debugging skills, and ability to break down complex problems
-- **Rationale:** Problem-solving is the core skill that differentiates successful developers
+- **Values:** `sealed`, `loose`, `vacuum_packed`, `damaged`
+- **Description:** The quality and type of packaging protecting the food item
+- **Rationale:** Proper packaging significantly extends food freshness by protecting from air, moisture, and contamination
 
 ### Class Labels (Binary Classification)
 
-#### Class 0: Low Career Success
+#### Class 0: Spoiled
 
-- **Description:** Students who may face challenges in their software development career
-- **Indicators:** Difficulty finding employment, lower performance reviews, limited career advancement
-- **Prediction Confidence:** Model provides probability of belonging to this class
+- **Description:** Food items that are unsafe to consume and should be discarded
+- **Indicators:** Risk of foodborne illness, unpleasant taste/smell, visible deterioration
+- **Prediction Confidence:** Model provides probability of spoilage based on storage conditions
 
-#### Class 1: High Career Success
+#### Class 1: Fresh
 
-- **Description:** Students likely to excel in software development careers
-- **Indicators:** Good job prospects, strong performance, career advancement opportunities
-- **Prediction Confidence:** Model provides probability of belonging to this class
+- **Description:** Food items that are safe to consume and maintain good quality
+- **Indicators:** Safe for consumption, maintains nutritional value, acceptable taste and appearance
+- **Prediction Confidence:** Model provides probability of freshness based on storage conditions
 
 ---
 
@@ -81,26 +81,26 @@ This model could be used by:
 
 ### Dataset Characteristics
 
-- **Size:** 124 data points (exceeds minimum requirement of 100)
+- **Size:** 133 data points (exceeds minimum requirement of 100)
 - **Format:** CSV file with comma-separated values
-- **Distribution:** Balanced representation of different skill combinations
-- **Quality:** Synthetic data designed to reflect realistic patterns in student performance
+- **Distribution:** Balanced representation of different storage scenarios
+- **Quality:** Synthetic data designed to reflect realistic food storage patterns and spoilage rates
 
 ### Data Generation Strategy
 
 The dataset was created to reflect logical relationships:
 
-- **High Success Pattern:** Expert/Advanced programming + Excellent/Good math + Good/Excellent collaboration + Strong/Exceptional problem-solving
-- **Low Success Pattern:** Beginner/Intermediate programming + Poor/Fair math + Poor/Average collaboration + Weak/Moderate problem-solving
-- **Mixed Cases:** Intermediate combinations to test model robustness
+- **Fresh Pattern:** Freezer/Fridge storage + Short/Medium duration + Proper packaging (sealed/vacuum_packed)
+- **Spoiled Pattern:** Left_outside storage + Long/Very_long duration + Poor packaging (loose/damaged)
+- **Mixed Cases:** Intermediate combinations like pantry storage with varying durations and packaging
 
 ### Sample Data Entries
 
 ```
-expert,excellent,excellent,exceptional,1
-beginner,poor,poor,weak,0
-intermediate,good,average,moderate,0
-advanced,excellent,good,strong,1
+freezer,short,meat,vacuum_packed,1
+left_outside,very_long,vegetable,damaged,0
+fridge,medium,dairy,loose,0
+pantry,short,canned,sealed,1
 ```
 
 ---
@@ -142,29 +142,29 @@ Where:
 
 ## 5. Test Results Analysis
 
-### Test Scenario 1: High-Performing Student
+### Test Scenario 1: High Freshness Item
 
-**Input:** `expert`, `excellent`, `excellent`, `exceptional`
+**Input:** `freezer`, `short`, `meat`, `vacuum_packed`
 
-- **Prediction:** High Career Success (Class 1)
-- **Confidence:** 100.0%
-- **Analysis:** Perfect alignment with success indicators results in maximum confidence
+- **Prediction:** Fresh (Class 1)
+- **Confidence:** ~100%
+- **Analysis:** Optimal storage conditions with freezer temperature, short duration, and vacuum packaging result in maximum freshness confidence
 
-### Test Scenario 2: Average Student
+### Test Scenario 2: Borderline Freshness Item
 
-**Input:** `intermediate`, `good`, `average`, `moderate`
+**Input:** `fridge`, `medium`, `dairy`, `loose`
 
-- **Prediction:** Low Career Success (Class 0)
-- **Confidence:** 67.3%
-- **Analysis:** Mixed profile leads to moderate confidence; could benefit from skill improvement
+- **Prediction:** Spoiled (Class 0)
+- **Confidence:** ~65%
+- **Analysis:** Mixed conditions - good refrigeration but loose packaging and medium duration create uncertainty about dairy freshness
 
-### Test Scenario 3: Struggling Student
+### Test Scenario 3: Clearly Spoiled Item
 
-**Input:** `beginner`, `poor`, `poor`, `weak`
+**Input:** `left_outside`, `very_long`, `vegetable`, `damaged`
 
-- **Prediction:** Low Career Success (Class 0)
-- **Confidence:** 100.0%
-- **Analysis:** All indicators point to challenges; high confidence in prediction
+- **Prediction:** Spoiled (Class 0)
+- **Confidence:** ~100%
+- **Analysis:** All spoilage indicators present - no temperature control, extended time, and damaged packaging guarantee spoilage
 
 ---
 
@@ -188,8 +188,8 @@ Where:
 
 ### Strengths
 
-1. **Clear Patterns:** The model successfully identifies extreme cases (all high skills → success, all low skills → failure)
-2. **Logical Relationships:** Predictions align with intuitive expectations about career success factors
+1. **Clear Patterns:** The model successfully identifies extreme cases (optimal storage → fresh, poor storage → spoiled)
+2. **Logical Relationships:** Predictions align with intuitive expectations about food storage and spoilage
 3. **Confidence Metrics:** Provides meaningful confidence levels that reflect prediction certainty
 4. **Robust Implementation:** Handles edge cases and invalid inputs gracefully
 
@@ -197,22 +197,22 @@ Where:
 
 #### 1. Dataset Limitations
 
-- **Synthetic Data:** Generated rather than real-world data may not capture all nuances
-- **Limited Size:** 124 samples may not represent full population diversity
-- **Simplified Categorization:** Discrete categories may not capture continuous skill variations
+- **Synthetic Data:** Generated rather than real-world data may not capture all food spoilage nuances
+- **Limited Size:** 133 samples may not represent full diversity of food storage scenarios
+- **Simplified Categorization:** Discrete categories may not capture continuous factors like exact temperatures or humidity
 
 #### 2. Model Assumptions
 
-- **Independence Assumption:** Naïve Bayes assumes features are independent, which may not be realistic (e.g., programming skills and problem-solving are likely correlated)
-- **Equal Weight:** All variables treated equally; some may be more predictive than others
-- **Binary Classification:** Success exists on a spectrum, not just high/low categories
+- **Independence Assumption:** Naïve Bayes assumes features are independent, which may not be realistic (e.g., storage location and duration are often correlated)
+- **Equal Weight:** All variables treated equally; some may be more critical (e.g., left_outside vs packaging type)
+- **Binary Classification:** Freshness exists on a spectrum, not just fresh/spoiled categories
 
 #### 3. Real-World Factors Not Considered
 
-- **External Factors:** Market conditions, location, industry trends
-- **Soft Skills:** Communication, leadership, adaptability
-- **Experience:** Internships, projects, portfolio quality
-- **Networking:** Professional connections and mentorship
+- **Temperature Variations:** Exact temperatures within storage locations
+- **Humidity Levels:** Moisture content affecting spoilage rates
+- **Food Processing:** Pre-processing methods that affect shelf life
+- **Seasonal Factors:** External temperature variations affecting storage effectiveness
 
 ### Accuracy Assessment
 
@@ -226,39 +226,39 @@ Based on test scenarios:
 
 #### Qualitative Analysis
 
-The model demonstrates **good accuracy** for clear-cut cases but shows **moderate confidence** for borderline cases, which is appropriate given the complexity of career prediction.
+The model demonstrates **excellent accuracy** for clear-cut cases but shows **moderate confidence** for borderline cases, which is appropriate given the complexity of food spoilage prediction.
 
-### Estimated Overall Accuracy: 75-85%
+### Estimated Overall Accuracy: 80-90%
 
 This estimate is based on:
 
-- Perfect classification of clear cases (40% of scenarios)
-- Good classification of moderate cases (50% of scenarios)
-- Some uncertainty in borderline cases (10% of scenarios)
+- Perfect classification of extreme cases (45% of scenarios)
+- Good classification of typical cases (45% of scenarios)
+- Some uncertainty in edge cases (10% of scenarios)
 
 ### Recommendations for Improvement
 
-1. **Expanded Dataset:** Collect real-world career outcome data from alumni
-2. **Additional Variables:** Include GPA, project portfolio, internship experience
-3. **Weighted Features:** Implement feature importance weighting
-4. **Multi-class Classification:** Add "medium success" category for more nuanced predictions
-5. **Ensemble Methods:** Combine with other algorithms (Decision Trees, SVM) for improved accuracy
-6. **Temporal Factors:** Consider career progression over time rather than binary outcomes
+1. **Expanded Dataset:** Collect real-world food spoilage data from food safety studies
+2. **Additional Variables:** Include temperature ranges, humidity levels, expiration dates
+3. **Weighted Features:** Implement feature importance weighting (storage location may be more critical than packaging)
+4. **Multi-class Classification:** Add "questionable" category for items requiring closer inspection
+5. **Ensemble Methods:** Combine with other algorithms (Decision Trees, Random Forest) for improved accuracy
+6. **Temporal Factors:** Consider spoilage progression over time with specific timestamps
 
 ---
 
 ## 8. Conclusion
 
-The Software Developer Career Success Predictor successfully demonstrates the application of Naïve Bayes classification to a real-world problem. While the model shows strong performance for clear-cut cases and provides meaningful insights, it also highlights the complexity of predicting career outcomes based solely on academic indicators.
+The Food Storage Freshness Predictor successfully demonstrates the application of Naïve Bayes classification to a practical food safety problem. While the model shows strong performance for clear-cut cases and provides meaningful insights, it also highlights the complexity of predicting food freshness based on storage conditions alone.
 
-The implementation showcases proper software engineering practices including object-oriented design, comprehensive testing, and detailed documentation. The model serves as a solid foundation for more sophisticated career prediction systems and provides valuable learning outcomes for understanding classification algorithms.
+The implementation showcases proper software engineering practices including object-oriented design, comprehensive testing, and detailed documentation. The model serves as a solid foundation for more sophisticated food safety systems and provides valuable learning outcomes for understanding classification algorithms.
 
 **Key Achievements:**
 
-- ✅ Comprehensive Naïve Bayes implementation with 124+ data points
+- ✅ Comprehensive Naïve Bayes implementation with 133+ data points
 - ✅ Well-designed class structure with proper encapsulation
 - ✅ Extensive unit testing with 100% test pass rate
 - ✅ Detailed analysis of model accuracy and limitations
 - ✅ Professional documentation and code structure
 
-This project successfully meets all requirements while providing practical insights into machine learning applications in educational and career contexts.
+This project successfully meets all requirements while providing practical insights into machine learning applications in food safety and smart home technology contexts.

@@ -4,7 +4,7 @@ using System.IO;
 namespace NaiveBayesTests
 {
     [TestClass]
-    public class NaiveBayesClassifierTests
+    public class FoodFreshnessClassifierTests
     {
         private NaiveBayesClassifier? classifier;
         private string[] attributes = null!;
@@ -15,21 +15,21 @@ namespace NaiveBayesTests
         [TestInitialize]
         public void Setup()
         {
-            // Initialize test data
+            // Initialize test data for food freshness prediction
             attributes = new string[]
             {
-                "Programming Skills",
-                "Math Performance",
-                "Team Collaboration",
-                "Problem Solving",
-                "Career Success"
+                "Storage Location",
+                "Storage Duration",
+                "Item Type",
+                "Packaging Quality",
+                "Freshness Status"
             };
 
             attributeValues = new string[attributes.Length][];
-            attributeValues[0] = new string[] { "beginner", "intermediate", "advanced", "expert" };
-            attributeValues[1] = new string[] { "poor", "fair", "good", "excellent" };
-            attributeValues[2] = new string[] { "poor", "average", "good", "excellent" };
-            attributeValues[3] = new string[] { "weak", "moderate", "strong", "exceptional" };
+            attributeValues[0] = new string[] { "fridge", "freezer", "pantry", "left_outside" };
+            attributeValues[1] = new string[] { "short", "medium", "long", "very_long" };
+            attributeValues[2] = new string[] { "meat", "vegetable", "dairy", "grain", "canned" };
+            attributeValues[3] = new string[] { "sealed", "loose", "vacuum_packed", "damaged" };
             attributeValues[4] = new string[] { "0", "1", "", "" };
 
             classifier = new NaiveBayesClassifier(4, 2, attributes, attributeValues);
@@ -64,7 +64,7 @@ namespace NaiveBayesTests
         public void LoadTrainingData_WithValidFile_LoadsDataSuccessfully()
         {
             // Arrange
-            var simpleData = "expert,excellent,excellent,exceptional,1\nbeginner,poor,poor,weak,0\nintermediate,good,average,moderate,1";
+            var simpleData = "freezer,short,meat,vacuum_packed,1\nleft_outside,very_long,vegetable,damaged,0\nfridge,medium,dairy,loose,0";
             var tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, simpleData);
 
@@ -74,13 +74,13 @@ namespace NaiveBayesTests
                 classifier!.LoadTrainingData(tempFile);
 
                 // Test classification to ensure data was loaded
-                string[] testInput = new string[] { "expert", "excellent", "excellent", "exceptional" };
+                string[] testInput = new string[] { "freezer", "short", "meat", "vacuum_packed" };
                 var result = classifier.Classify(testInput);
 
                 // Assert
                 Assert.IsNotNull(result);
                 Assert.AreEqual(4, result.Input.Length);
-                Assert.AreEqual("expert", result.Input[0]);
+                Assert.AreEqual("freezer", result.Input[0]);
             }
             finally
             {
@@ -94,7 +94,7 @@ namespace NaiveBayesTests
         {
             // Arrange
             var freshClassifier = new NaiveBayesClassifier(4, 2, attributes, attributeValues);
-            string[] testInput = new string[] { "expert", "excellent", "excellent", "exceptional" };
+            string[] testInput = new string[] { "freezer", "short", "meat", "vacuum_packed" };
 
             // Act & Assert (ExpectedException handles the assertion)
             freshClassifier.Classify(testInput);
@@ -109,48 +109,48 @@ namespace NaiveBayesTests
 
             // Act & Assert (ExpectedException handles the assertion)
             // Test with wrong number of input variables (should be 4, giving 3)
-            string[] invalidInput = new string[] { "expert", "excellent", "exceptional" };
+            string[] invalidInput = new string[] { "freezer", "short", "meat" };
             classifier.Classify(invalidInput);
         }
 
         [TestMethod]
-        public void Classify_HighPerformanceProfile_PredictsHighSuccess()
+        public void Classify_HighFreshnessProfile_PredictsFresh()
         {
             // Arrange
             classifier!.LoadTrainingData(tempDataFile);
-            string[] highPerformanceInput = new string[] { "expert", "excellent", "excellent", "exceptional" };
+            string[] highFreshnessInput = new string[] { "freezer", "short", "meat", "vacuum_packed" };
 
             // Act
-            var result = classifier.Classify(highPerformanceInput);
+            var result = classifier.Classify(highFreshnessInput);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.PredictedClass, "Expert profile should predict high career success");
+            Assert.AreEqual(1, result.PredictedClass, "Well-preserved item should predict fresh");
             Assert.IsTrue(result.Confidence > 0.5, "Should have high confidence for clear case");
-            Assert.AreEqual("expert", result.Input[0]);
-            Assert.AreEqual("excellent", result.Input[1]);
-            Assert.AreEqual("excellent", result.Input[2]);
-            Assert.AreEqual("exceptional", result.Input[3]);
+            Assert.AreEqual("freezer", result.Input[0]);
+            Assert.AreEqual("short", result.Input[1]);
+            Assert.AreEqual("meat", result.Input[2]);
+            Assert.AreEqual("vacuum_packed", result.Input[3]);
         }
 
         [TestMethod]
-        public void Classify_LowPerformanceProfile_PredictsLowSuccess()
+        public void Classify_LowFreshnessProfile_PredictsSpoiled()
         {
             // Arrange
             classifier!.LoadTrainingData(tempDataFile);
-            string[] lowPerformanceInput = new string[] { "beginner", "poor", "poor", "weak" };
+            string[] lowFreshnessInput = new string[] { "left_outside", "very_long", "vegetable", "damaged" };
 
             // Act
-            var result = classifier.Classify(lowPerformanceInput);
+            var result = classifier.Classify(lowFreshnessInput);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.PredictedClass, "Beginner profile should predict low career success");
+            Assert.AreEqual(0, result.PredictedClass, "Poorly stored item should predict spoiled");
             Assert.IsTrue(result.Confidence > 0.5, "Should have high confidence for clear case");
-            Assert.AreEqual("beginner", result.Input[0]);
-            Assert.AreEqual("poor", result.Input[1]);
-            Assert.AreEqual("poor", result.Input[2]);
-            Assert.AreEqual("weak", result.Input[3]);
+            Assert.AreEqual("left_outside", result.Input[0]);
+            Assert.AreEqual("very_long", result.Input[1]);
+            Assert.AreEqual("vegetable", result.Input[2]);
+            Assert.AreEqual("damaged", result.Input[3]);
         }
 
         [TestMethod]
@@ -158,7 +158,7 @@ namespace NaiveBayesTests
         {
             // Arrange
             classifier!.LoadTrainingData(tempDataFile);
-            string[] testInput = new string[] { "intermediate", "good", "average", "moderate" };
+            string[] testInput = new string[] { "fridge", "medium", "dairy", "loose" };
 
             // Act
             var result = classifier.Classify(testInput);
@@ -184,7 +184,7 @@ namespace NaiveBayesTests
         {
             // Arrange
             classifier!.LoadTrainingData(tempDataFile);
-            string[] testInput = new string[] { "advanced", "good", "good", "strong" };
+            string[] testInput = new string[] { "pantry", "medium", "grain", "sealed" };
 
             // Act
             var result = classifier.Classify(testInput);
@@ -202,7 +202,7 @@ namespace NaiveBayesTests
         {
             // Arrange
             classifier!.LoadTrainingData(tempDataFile);
-            string[] testInput = new string[] { "advanced", "good", "good", "strong" };
+            string[] testInput = new string[] { "fridge", "long", "vegetable", "sealed" };
 
             // Act
             var result = classifier.Classify(testInput);
@@ -218,7 +218,7 @@ namespace NaiveBayesTests
         {
             // Arrange
             classifier!.LoadTrainingData(tempDataFile);
-            string[] testInput = new string[] { "intermediate", "fair", "average", "moderate" };
+            string[] testInput = new string[] { "pantry", "short", "canned", "sealed" };
 
             // Act
             var result = classifier.Classify(testInput);
@@ -254,9 +254,9 @@ namespace NaiveBayesTests
                 Console.SetOut(originalOut);
 
                 // Assert
-                Assert.IsTrue(output.Contains("Software Developer Career Success Prediction Model"));
+                Assert.IsTrue(output.Contains("Food Storage Freshness Prediction Model"));
                 Assert.IsTrue(output.Contains("Number of predictor variables"));
-                Assert.IsTrue(output.Contains("Programming Skills"));
+                Assert.IsTrue(output.Contains("Storage Location"));
             }
             catch (Exception ex)
             {
@@ -269,7 +269,7 @@ namespace NaiveBayesTests
         {
             // Arrange
             classifier!.LoadTrainingData(tempDataFile);
-            string[] testInput = new string[] { "advanced", "good", "good", "strong" };
+            string[] testInput = new string[] { "fridge", "medium", "meat", "sealed" };
             var result = classifier.Classify(testInput);
 
             // Act
@@ -299,26 +299,26 @@ namespace NaiveBayesTests
 
         private string CreateTestDataset()
         {
-            return @"expert,excellent,excellent,exceptional,1
-advanced,good,good,strong,1
-intermediate,fair,average,moderate,0
-beginner,poor,poor,weak,0
-expert,good,excellent,strong,1
-advanced,excellent,good,exceptional,1
-intermediate,good,average,strong,1
-beginner,fair,poor,weak,0
-expert,excellent,good,exceptional,1
-advanced,good,excellent,strong,1
-intermediate,fair,good,moderate,1
-beginner,poor,average,weak,0
-expert,good,good,strong,1
-advanced,excellent,excellent,exceptional,1
-intermediate,good,average,moderate,0
-beginner,fair,poor,weak,0
-expert,excellent,excellent,strong,1
-advanced,good,good,exceptional,1
-intermediate,fair,average,moderate,0
-beginner,poor,poor,weak,0";
+            return @"freezer,short,meat,vacuum_packed,1
+freezer,short,vegetable,sealed,1
+fridge,short,dairy,sealed,1
+pantry,short,grain,sealed,1
+pantry,short,canned,sealed,1
+left_outside,short,meat,damaged,0
+left_outside,short,vegetable,damaged,0
+left_outside,medium,dairy,loose,0
+left_outside,long,vegetable,damaged,0
+left_outside,very_long,meat,damaged,0
+fridge,medium,dairy,loose,0
+fridge,long,meat,sealed,0
+fridge,very_long,vegetable,sealed,0
+pantry,long,grain,loose,0
+pantry,very_long,grain,sealed,0
+freezer,medium,meat,vacuum_packed,1
+freezer,long,vegetable,sealed,1
+fridge,short,meat,vacuum_packed,1
+fridge,medium,vegetable,sealed,1
+pantry,medium,canned,sealed,1";
         }
     }
 }

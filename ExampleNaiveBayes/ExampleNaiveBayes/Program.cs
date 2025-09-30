@@ -5,11 +5,11 @@ using System.Linq;
 namespace ExampleNaiveBayes
 {
     /**
-    * Naive Bayes Classifier for predicting software developer career success.
+    * Naive Bayes Classifier for predicting food storage freshness.
     * 
-    * This program implements a Naive Bayes classifier to predict whether a software developer
-    * will have high or low career success based on various attributes such as programming skills,
-    * math performance, team collaboration, and problem-solving abilities.
+    * This program implements a Naive Bayes classifier to predict whether stored food items
+    * are fresh or spoiled based on various factors such as storage location, storage duration,
+    * item type, and packaging quality.
     * 
     * The classifier is trained on a dataset and can classify new instances based on the learned model.
     * It includes Laplacian smoothing to handle zero-frequency problems and provides detailed output
@@ -114,7 +114,7 @@ namespace ExampleNaiveBayes
 
         public void PrintModelInfo()
         {
-            Console.WriteLine("=== Software Developer Career Success Prediction Model ===");
+            Console.WriteLine("=== Food Storage Freshness Prediction Model ===");
             Console.WriteLine($"Number of predictor variables: {numberVar}");
             Console.WriteLine($"Number of class labels: {numberClassLabels}");
             Console.WriteLine($"Training data points: {N}");
@@ -133,8 +133,8 @@ namespace ExampleNaiveBayes
             Console.WriteLine();
 
             Console.WriteLine("Class labels:");
-            Console.WriteLine("0 = Low Career Success (difficulty finding jobs, lower performance)");
-            Console.WriteLine("1 = High Career Success (good job prospects, strong performance)");
+            Console.WriteLine("0 = Spoiled (unsafe to consume, discard item)");
+            Console.WriteLine("1 = Fresh (safe to consume, good quality)");
             Console.WriteLine();
         }
 
@@ -234,7 +234,7 @@ namespace ExampleNaiveBayes
             Console.WriteLine();
 
             Console.WriteLine($"Predicted class: {PredictedClass}");
-            Console.WriteLine($"Prediction: {(PredictedClass == 1 ? "High Career Success" : "Low Career Success")}");
+            Console.WriteLine($"Prediction: {(PredictedClass == 1 ? "Fresh (Safe to consume)" : "Spoiled (Do not consume)")}");
             Console.WriteLine($"Confidence: {Confidence:F4} ({Confidence * 100:F1}%)");
             Console.WriteLine();
         }
@@ -247,7 +247,7 @@ namespace ExampleNaiveBayes
             try
             {
                 Console.WriteLine("===============================================");
-                Console.WriteLine("Software Developer Career Success Predictor");
+                Console.WriteLine("Food Storage Freshness Predictor");
                 Console.WriteLine("Using Naive Bayes Classification");
                 Console.WriteLine("===============================================");
                 Console.WriteLine();
@@ -258,58 +258,54 @@ namespace ExampleNaiveBayes
 
                 string[] attributes = new string[]
                 {
-                    "Programming Skills",
-                    "Math Performance",
-                    "Team Collaboration",
-                    "Problem Solving",
-                    "Career Success"
+                    "Storage Location",
+                    "Storage Duration",
+                    "Item Type",
+                    "Packaging Quality",
+                    "Freshness Status"
                 };
 
                 string[][] attributeValues = new string[attributes.Length][];
-                attributeValues[0] = new string[] { "beginner", "intermediate", "advanced", "expert" };
-                attributeValues[1] = new string[] { "poor", "fair", "good", "excellent" };
-                attributeValues[2] = new string[] { "poor", "average", "good", "excellent" };
-                attributeValues[3] = new string[] { "weak", "moderate", "strong", "exceptional" };
+                attributeValues[0] = new string[] { "fridge", "freezer", "pantry", "left_outside" };
+                attributeValues[1] = new string[] { "short", "medium", "long", "very_long" };
+                attributeValues[2] = new string[] { "meat", "vegetable", "dairy", "grain", "canned" };
+                attributeValues[3] = new string[] { "sealed", "loose", "vacuum_packed", "damaged" };
                 attributeValues[4] = new string[] { "0", "1", "", "" };
 
                 // Create classifier
                 NaiveBayesClassifier classifier = new NaiveBayesClassifier(numberVar, numberClassLabels, attributes, attributeValues);
 
                 // Load training data
-                string fileName = ".\\Data\\career_success_data.txt";
+                string fileName = ".\\Data\\food_freshness_data.txt";
                 classifier.LoadTrainingData(fileName);
 
                 // Print model information
                 classifier.PrintModelInfo();
 
-                // Test scenarios
-                // Run unit tests first
-                NaiveBayesClassifierTests.RunAllTests();
-
                 Console.WriteLine("=== TESTING DIFFERENT SCENARIOS ===");
                 Console.WriteLine();
 
-                // Test Case 1: High-performing student
-                Console.WriteLine("--- Test Case 1: High-performing student ---");
-                string[] test1 = new string[] { "expert", "excellent", "excellent", "exceptional" };
+                // Test Case 1: High freshness item (freezer, short storage, quality packaging)
+                Console.WriteLine("--- Test Case 1: High freshness item ---");
+                string[] test1 = new string[] { "freezer", "short", "meat", "vacuum_packed" };
                 var result1 = classifier.Classify(test1);
                 result1.PrintDetailedResults();
 
-                // Test Case 2: Average student
-                Console.WriteLine("--- Test Case 2: Average student ---");
-                string[] test2 = new string[] { "intermediate", "good", "average", "moderate" };
+                // Test Case 2: Borderline freshness item 
+                Console.WriteLine("--- Test Case 2: Borderline freshness item ---");
+                string[] test2 = new string[] { "fridge", "medium", "dairy", "loose" };
                 var result2 = classifier.Classify(test2);
                 result2.PrintDetailedResults();
 
-                // Test Case 3: Struggling student
-                Console.WriteLine("--- Test Case 3: Struggling student ---");
-                string[] test3 = new string[] { "beginner", "poor", "poor", "weak" };
+                // Test Case 3: Clearly spoiled item
+                Console.WriteLine("--- Test Case 3: Clearly spoiled item ---");
+                string[] test3 = new string[] { "left_outside", "very_long", "vegetable", "damaged" };
                 var result3 = classifier.Classify(test3);
                 result3.PrintDetailedResults();
 
                 // Interactive mode
                 Console.WriteLine("=== INTERACTIVE MODE ===");
-                Console.WriteLine("Enter student characteristics to predict career success:");
+                Console.WriteLine("Enter food item details to predict freshness:");
                 Console.WriteLine("Press Enter with empty input to exit.");
                 Console.WriteLine();
 
@@ -317,23 +313,23 @@ namespace ExampleNaiveBayes
                 {
                     try
                     {
-                        Console.Write("Programming Skills (beginner/intermediate/advanced/expert): ");
-                        string prog = Console.ReadLine().Trim().ToLower();
-                        if (string.IsNullOrEmpty(prog)) break;
+                        Console.Write("Storage Location (fridge/freezer/pantry/left_outside): ");
+                        string location = Console.ReadLine().Trim().ToLower();
+                        if (string.IsNullOrEmpty(location)) break;
 
-                        Console.Write("Math Performance (poor/fair/good/excellent): ");
-                        string math = Console.ReadLine().Trim().ToLower();
-                        if (string.IsNullOrEmpty(math)) break;
+                        Console.Write("Storage Duration (short/medium/long/very_long): ");
+                        string duration = Console.ReadLine().Trim().ToLower();
+                        if (string.IsNullOrEmpty(duration)) break;
 
-                        Console.Write("Team Collaboration (poor/average/good/excellent): ");
-                        string team = Console.ReadLine().Trim().ToLower();
-                        if (string.IsNullOrEmpty(team)) break;
+                        Console.Write("Item Type (meat/vegetable/dairy/grain/canned): ");
+                        string itemType = Console.ReadLine().Trim().ToLower();
+                        if (string.IsNullOrEmpty(itemType)) break;
 
-                        Console.Write("Problem Solving (weak/moderate/strong/exceptional): ");
-                        string problem = Console.ReadLine().Trim().ToLower();
-                        if (string.IsNullOrEmpty(problem)) break;
+                        Console.Write("Packaging Quality (sealed/loose/vacuum_packed/damaged): ");
+                        string packaging = Console.ReadLine().Trim().ToLower();
+                        if (string.IsNullOrEmpty(packaging)) break;
 
-                        string[] userInput = new string[] { prog, math, team, problem };
+                        string[] userInput = new string[] { location, duration, itemType, packaging };
                         var userResult = classifier.Classify(userInput);
 
                         Console.WriteLine();
@@ -348,7 +344,7 @@ namespace ExampleNaiveBayes
                     }
                 }
 
-                Console.WriteLine("Thank you for using the Career Success Predictor!");
+                Console.WriteLine("Thank you for using the Food Freshness Predictor!");
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey();
             }
