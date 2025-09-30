@@ -1,10 +1,20 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ExampleNaiveBayes
 {
+    /**
+    * Naive Bayes Classifier for predicting software developer career success.
+    * 
+    * This program implements a Naive Bayes classifier to predict whether a software developer
+    * will have high or low career success based on various attributes such as programming skills,
+    * math performance, team collaboration, and problem-solving abilities.
+    * 
+    * The classifier is trained on a dataset and can classify new instances based on the learned model.
+    * It includes Laplacian smoothing to handle zero-frequency problems and provides detailed output
+    * of the classification process.
+    */
     public class NaiveBayesClassifier
     {
         private readonly int numberVar;
@@ -14,6 +24,14 @@ namespace ExampleNaiveBayes
         private string[][] trainingData;
         private int N; // Number of data points
 
+        /**
+        * Constructor to initialize the Naive Bayes Classifier.
+        * 
+        * @param numberVar Number of predictor variables.
+        * @param numberClassLabels Number of class labels.
+        * @param attributes Array of attribute names.
+        * @param attributeValues 2D array of possible values for each attribute.
+        */
         public NaiveBayesClassifier(int numberVar, int numberClassLabels, string[] attributes, string[][] attributeValues)
         {
             this.numberVar = numberVar;
@@ -22,6 +40,10 @@ namespace ExampleNaiveBayes
             this.attributeValues = attributeValues;
         }
 
+        /**
+        * Loads training data from a file.
+        * @param fileName Path to the training data file.
+        */
         public void LoadTrainingData(string fileName)
         {
             // Count lines first to determine N
@@ -29,6 +51,13 @@ namespace ExampleNaiveBayes
             trainingData = LoadData(fileName, N, numberVar + 1, ',');
         }
 
+        /**
+        * Loads data from a file into a 2D array.
+        * @param fn File name.
+        * @param n Number of rows.
+        * @param m Number of columns.
+        * @param delimit Delimiter character.
+        */
         public ClassificationResult Classify(string[] input)
         {
             if (trainingData == null)
