@@ -51,13 +51,6 @@ namespace ExampleNaiveBayes
             trainingData = LoadData(fileName, N, numberVar + 1, ',');
         }
 
-        /**
-        * Loads data from a file into a 2D array.
-        * @param fn File name.
-        * @param n Number of rows.
-        * @param m Number of columns.
-        * @param delimit Delimiter character.
-        */
         public ClassificationResult Classify(string[] input)
         {
             if (trainingData == null)

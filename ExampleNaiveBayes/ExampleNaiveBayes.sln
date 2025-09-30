@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.33328.57
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleNaiveBayes", "ExampleNaiveBayes\ExampleNaiveBayes.csproj", "{A2FF72E1-7D94-43D1-91FF-1BCD19C11487}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NaiveBayesTests", "NaiveBayesTests\NaiveBayesTests.csproj", "{3932B72E-30C0-4B9C-BBC1-821328D77414}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A2FF72E1-7D94-43D1-91FF-1BCD19C11487}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2FF72E1-7D94-43D1-91FF-1BCD19C11487}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2FF72E1-7D94-43D1-91FF-1BCD19C11487}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3932B72E-30C0-4B9C-BBC1-821328D77414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3932B72E-30C0-4B9C-BBC1-821328D77414}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3932B72E-30C0-4B9C-BBC1-821328D77414}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3932B72E-30C0-4B9C-BBC1-821328D77414}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
